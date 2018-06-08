@@ -1,0 +1,9 @@
+*.csv
+*.pyc
+*.swp
+*.idea~
+*.~
+.DS_Store
+*.model
+*.txt
+*.bak
