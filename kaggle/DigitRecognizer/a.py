@@ -13,7 +13,7 @@ def load_data(file_path):
 
 def save_model(model, model_name=None):
     if not model_name:
-        model_name = 'model-' + str(int(time.time()))
+        model_name = 'model/model-' + str(int(time.time()))
     joblib.dump(model, model_name)
 
 
@@ -29,13 +29,19 @@ def evaluate(model, file_path='./test.csv'):
     print accuracy_score(y_true=y_true, y_pred=y_predict)
 
 
-def train(file_path='./train.csv'):
+def train(file_path='./train.csv',
+          n_estimators=10,
+          max_depth=10,
+          learning_rate=0.1):
     train_data_path = file_path
     df = load_data(file_path=train_data_path)
     train = df.set_index('label')
 
     gb = GradientBoostingClassifier(
-        n_estimators=150, max_depth=10, learning_rate=0.1, verbose=True)
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        learning_rate=learning_rate,
+        verbose=True)
 
     gb.fit(train, df['label'])
     return gb
@@ -55,7 +61,7 @@ def predict(model, file_name='result.csv'):
 
 def main():
     print 'Training...'
-    model = train(file_path='train.csv')
+    model = train(file_path='my_test.csv')
     print 'Training finished!'
 
     print 'Saving...'
@@ -72,5 +78,20 @@ def get_result():
 
 
 if __name__ == '__main__':
-    # main()
-    get_result()
+    hyper_param_file = 'hyper_param.txt'
+    with open(hyper_param_file, 'r') as f:
+        for line in f.readlines():
+            param_list = line.strip().split()
+            n_estimators = int(param_list[0])
+            max_depth = int(param_list[1])
+            learning_rate = float(param_list[2])
+            model_name = 'model/model_' + str(n_estimators) + '_' + str(
+                max_depth) + '_' + str(learning_rate) + '_' + str(
+                    int(time.time()))
+
+            model = train(file_path='my_test.csv')
+            save_model(model=model, model_name=model_name)
+            evaluate(model, file_path='my_test.csv')
+
+    #main()
+    # get_result()
