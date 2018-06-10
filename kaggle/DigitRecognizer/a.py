@@ -17,6 +17,10 @@ def save_model(model, model_name=None):
     joblib.dump(model, model_name)
 
 
+def load_model(model_path):
+    return joblib.load(model_path)
+
+
 def evaluate(model, file_path='./test.csv'):
     test = load_data(file_path=file_path)
     y_true = test['label']
@@ -31,7 +35,7 @@ def train(file_path='./train.csv'):
     train = df.set_index('label')
 
     gb = GradientBoostingClassifier(
-        n_estimators=200, max_depth=6, learning_rate=0.3, verbose=True)
+        n_estimators=150, max_depth=10, learning_rate=0.1, verbose=True)
 
     gb.fit(train, df['label'])
     return gb
@@ -51,7 +55,7 @@ def predict(model, file_name='result.csv'):
 
 def main():
     print 'Training...'
-    model = train(file_path='my_train.csv')
+    model = train(file_path='train.csv')
     print 'Training finished!'
 
     print 'Saving...'
@@ -62,5 +66,11 @@ def main():
     print 'Done!'
 
 
+def get_result():
+    model = load_model('model-1528640526')
+    predict(model)
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    get_result()
