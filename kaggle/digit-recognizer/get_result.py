@@ -26,7 +26,7 @@ def evaluate(model, file_path='./test.csv'):
     y_true = test['label']
 
     y_predict = model.predict(test.set_index('label'))
-    print accuracy_score(y_true=y_true, y_pred=y_predict)
+    print(accuracy_score(y_true=y_true, y_pred=y_predict))
 
 
 def train(file_path='./train.csv',
@@ -41,6 +41,7 @@ def train(file_path='./train.csv',
         n_estimators=n_estimators,
         max_depth=max_depth,
         learning_rate=learning_rate,
+        # n_jobs=-1,
         verbose=True)
 
     gb.fit(train, df['label'])
@@ -59,40 +60,42 @@ def predict(model, file_name='result.csv'):
             f.write(result)
 
 
-def main():
-    print 'Training...'
-    model = train(file_path='my_test.csv')
-    print 'Training finished!'
+# def main():
+#     print 'Training...'
+#     model = train(file_path='my_test.csv')
+#     print 'Training finished!'
+#
+#     print 'Saving...'
+#     save_model(model=model)
+#
+#     print 'Evaluating...'
+#     evaluate(model, file_path='my_test.csv')
+#     print 'Done!'
 
-    print 'Saving...'
-    save_model(model=model)
 
-    print 'Evaluating...'
-    evaluate(model, file_path='my_test.csv')
-    print 'Done!'
-
-
-def get_result():
-    model = load_model('model-1528640526')
+def get_result(model_name):
+    model = load_model(model_name)
     predict(model)
 
 
 if __name__ == '__main__':
-    hyper_param_file = 'hyper_param.txt'
-    with open(hyper_param_file, 'r') as f:
-        for line in f.readlines():
-            param_list = line.strip().split()
-            n_estimators = int(param_list[0])
-            max_depth = int(param_list[1])
-            learning_rate = float(param_list[2])
-            model_name = 'model/model_' + str(n_estimators) + '_' + str(
-                max_depth) + '_' + str(learning_rate) + '_' + str(
-                    int(time.time()))
+    # hyper_param_file = 'hyper_param.txt'
+    # with open(hyper_param_file, 'r') as f:
+    #     for line in f.readlines():
+    #         param_list = line.strip().split()
+    #         n_estimators = int(param_list[0])
+    #         max_depth = int(param_list[1])
+    #         learning_rate = float(param_list[2])
+    #         model_name = 'model/model_' + str(n_estimators) + '_' + str(
+    #             max_depth) + '_' + str(learning_rate) + '_' + str(
+    #                 int(time.time()))
 
-            print model_name
-            model = train(file_path='my_train.csv')
-            save_model(model=model, model_name=model_name)
-            evaluate(model, file_path='my_test.csv')
-
-    #main()
-    # get_result()
+    #         print(model_name)
+    #         model = train(
+    #             file_path='my_train.csv',
+    #             n_estimators=n_estimators,
+    #             max_depth=max_depth,
+    #             learning_rate=learning_rate)
+    #         save_model(model=model, model_name=model_name)
+    #         evaluate(model, file_path='my_test.csv')
+    get_result(model_name='model/model_120_7_0.2_1528685234')
