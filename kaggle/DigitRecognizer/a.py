@@ -89,7 +89,8 @@ if __name__ == '__main__':
                 max_depth) + '_' + str(learning_rate) + '_' + str(
                     int(time.time()))
 
-            model = train(file_path='my_test.csv')
+            print model_name
+            model = train(file_path='my_train.csv')
             save_model(model=model, model_name=model_name)
             evaluate(model, file_path='my_test.csv')
 
