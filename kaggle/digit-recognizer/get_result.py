@@ -98,4 +98,4 @@ if __name__ == '__main__':
     #             learning_rate=learning_rate)
     #         save_model(model=model, model_name=model_name)
     #         evaluate(model, file_path='my_test.csv')
-    get_result(model_name='model/model_120_7_0.2_1528685234')
+    get_result(model_name='model/model_140_7_0.1_1528690818')

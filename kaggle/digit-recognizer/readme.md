@@ -8,4 +8,5 @@ sample: https://www.kaggle.com/c/3004/download/sample_submission.csv
     n_estimators=120, max_depth=6, learning_rate=0.1
 - 0.96700
     n_estimators=120, max_depth=7, learning_rate=0.2
-
+- 0.96828
+    n_estimators=140, max_depth=7, learning_rate=0.1
