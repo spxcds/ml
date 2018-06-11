@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import xgboost as xgb
 import time
 import pandas as pd
@@ -78,26 +79,39 @@ def get_result():
     predict(model)
 
 
+def train_and_evaluate(model_name,
+                       file_path='my_train.csv',
+                       n_estimators=None,
+                       max_depth=None,
+                       learning_rate=None):
+    print(model_name)
+    model = train(
+        file_path='my_train.csv',
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        learning_rate=learning_rate)
+    save_model(model=model, model_name=model_name)
+    evaluate(model, file_path='my_test.csv')
+
+
 if __name__ == '__main__':
     hyper_param_file = 'hyper_param.txt'
-    with open(hyper_param_file, 'r') as f:
-        for line in f.readlines():
-            param_list = line.strip().split()
-            n_estimators = int(param_list[0])
-            max_depth = int(param_list[1])
-            learning_rate = float(param_list[2])
-            model_name = 'model/model_' + str(n_estimators) + '_' + str(
-                max_depth) + '_' + str(learning_rate) + '_' + str(
-                    int(time.time()))
-
-            print(model_name)
-            model = train(
-                file_path='my_train.csv',
-                n_estimators=n_estimators,
-                max_depth=max_depth,
-                learning_rate=learning_rate)
-            save_model(model=model, model_name=model_name)
-            evaluate(model, file_path='my_test.csv')
+    with ThreadPoolExecutor(8) as executor:
+        with open(hyper_param_file, 'r') as f:
+            for line in f.readlines():
+                param_list = line.strip().split()
+                n_estimators = int(param_list[0])
+                max_depth = int(param_list[1])
+                learning_rate = float(param_list[2])
+                model_name = 'trained_model/model_' + str(
+                    n_estimators) + '_' + str(max_depth) + '_' + str(
+                        learning_rate) + '_' + str(int(time.time()))
+                executor.submit(
+                    train_and_evaluate,
+                    model_name=model_name,
+                    n_estimators=n_estimators,
+                    max_depth=max_depth,
+                    learning_rate=learning_rate)
 
     #main()
     # get_result()
