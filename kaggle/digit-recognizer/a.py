@@ -9,7 +9,14 @@ from sklearn.externals import joblib
 
 
 def load_data(file_path):
-    return pd.read_csv(file_path)
+    df = pd.read_csv(file_path)
+    if 'label' in df:
+        print('label in df')
+        df[df.iloc[:, 1:] > 0] = 1
+    else:
+        print('label not in df')
+        df[df > 0] = 1
+    return df
 
 
 def save_model(model, model_name=None):
@@ -96,7 +103,7 @@ def train_and_evaluate(model_name,
 
 if __name__ == '__main__':
     hyper_param_file = 'hyper_param.txt'
-    with ThreadPoolExecutor(8) as executor:
+    with ThreadPoolExecutor(10) as executor:
         with open(hyper_param_file, 'r') as f:
             for line in f.readlines():
                 param_list = line.strip().split()

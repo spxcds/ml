@@ -14,7 +14,14 @@ from kaggle_api import KaggleAPI
 
 
 def load_data(file_path):
-    return pd.read_csv(file_path)
+    df = pd.read_csv(file_path)
+    if 'label' in df:
+        print('label in df')
+        df[df.iloc[:, 1:] > 0] = 1
+    else:
+        print('label not in df')
+        df[df > 0] = 1
+    return df
 
 
 def save_model(model, model_name=None):
@@ -56,6 +63,10 @@ def train(file_path='./train.csv',
 
 def predict(model, file_name='result.csv'):
     test = load_data(file_path='./predict.csv')
+    # print('--------' * 20)
+    # print(test)
+    # print(test.shape)
+    # print(list(test.loc[0]))
     predict = model.predict(test)
     with open(file_name, 'w') as f:
         f.write('ImageId,Label\n')
@@ -86,10 +97,16 @@ def traverseDirByOSWalk(path):
 if __name__ == '__main__':
     path = 'trained_model'
     file_list = traverseDirByOSWalk(path=path)
-    print(file_list)
 
     for file_name in file_list:
         predict_file_name = 'predict_result/' + file_name.split(
             '/')[-1] + '.txt'
         # print file_name, predict_file_name
         get_result(model_name=file_name, result_file_name=predict_file_name)
+        break
+
+        kaggle_api = KaggleAPI()
+        kaggle_api.submit(
+            competition='digit-recognizer',
+            file_name=predict_file_name,
+            message=file_name.split('/')[-1])
